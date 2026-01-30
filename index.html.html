@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinguaLearn - Master Any Language</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Splash Screen */
+        .splash-screen {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .globe-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 30px;
+        }
+
+        .globe {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .globe::before {
+            content: '🌍';
+            font-size: 120px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .flags-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            transform: translate(-50%, -50%);
+            animation: rotateFlags 15s linear infinite;
+        }
+
+        @keyframes rotateFlags {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .flag {
+            position: absolute;
+            font-size: 30px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .flag:nth-child(1) { top: 0; left: 50%; transform: translateX(-50%); }
+        .flag:nth-child(2) { top: 50%; right: 0; transform: translateY(-50%); }
+        .flag:nth-child(3) { bottom: 0; left: 50%; transform: translateX(-50%); }
+        .flag:nth-child(4) { top: 50%; left: 0; transform: translateY(-50%); }
+        .flag:nth-child(5) { top: 20%; right: 20%; }
+        .flag:nth-child(6) { bottom: 20%; right: 20%; }
+        .flag:nth-child(7) { bottom: 20%; left: 20%; }
+        .flag:nth-child(8) { top: 20%; left: 20%; }
+
+        .splash-screen h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .splash-screen p {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            padding: 18px 50px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Language Selection Screen */
+        .language-selection {
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header-section h2 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .header-section p {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .language-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .language-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .language-card .flag-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .language-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .language-card p {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        /* Dashboard Screen */
+        .dashboard {
+            min-height: 100vh;
+            background: #f5f7fa;
+        }
+
+        .navbar {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .navbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .dashboard-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .progress-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            background: #e0e0e0;
+            height: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+        }
+
+        .modules-grid {
+            display: grid;
+            gap: 25px;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .module-icon {
+            font-size: 40px;
+        }
+
+        .module-status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .module-status.locked {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .module-status.in-progress {
+            background: #ffeaa7;
+            color: #d63031;
+        }
+
+        .module-status.completed {
+            background: #55efc4;
+            color: #00b894;
+        }
+
+        .lessons-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .lesson-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f5f7fa;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .lesson-item:hover {
+            background: #e8ecf1;
+        }
+
+        .lesson-item.completed {
+            background: #d5f4e6;
+        }
+
+        .lesson-item.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .lesson-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .lesson-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .lesson-item.completed .lesson-number {
+            background: #00b894;
+        }
+
+        .lesson-item.locked .lesson-number {
+            background: #b2bec3;
+        }
+
+        /* Lesson Screen */
+        .lesson-screen {
+            min-height: 100vh;
+            background: #f5f7fa;
+            padding: 40px 20px;
+        }
+
+        .lesson-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .lesson-header {
+            margin-bottom: 30px;
+        }
+
+        .lesson-progress {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .lesson-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .exercise-card {
+            margin-bottom: 30px;
+        }
+
+        .exercise-card h3 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option-btn {
+            padding: 20px;
+            background: #f5f7fa;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            background: #e8ecf1;
+            border-color: #667eea;
+        }
+
+        .option-btn.correct {
+            background: #d5f4e6;
+            border-color: #00b894;
+        }
+
+        .option-btn.wrong {
+            background: #fab1a0;
+            border-color: #d63031;
+        }
+
+        .option-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .feedback-box {
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .feedback-box.correct {
+            background: #d5f4e6;
+            color: #00b894;
+        }
+
+        .feedback-box.wrong {
+            background: #fab1a0;
+            color: #d63031;
+        }
+
+        .btn-next {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-back {
+            padding: 12px 30px;
+            background: #f5f7fa;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .btn-back:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .header-section h2 {
+                font-size: 1.8em;
+            }
+
+            .languages-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .splash-screen h1 {
+                font-size: 2em;
+            }
+
+            .globe-container {
+                width: 150px;
+                height: 150px;
+            }
+
+            .globe {
+                width: 150px;
+                height: 150px;
+            }
+
+            .globe::before {
+                font-size: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div class="screen active splash-screen" id="splashScreen">
+        <div class="globe-container">
+            <div class="globe"></div>
+            <div class="flags-orbit">
+                <div class="flag">🇺🇸</div>
+                <div class="flag">🇪🇸</div>
+                <div class="flag">🇫🇷</div>
+                <div class="flag">🇩🇪</div>
+                <div class="flag">🇮🇳</div>
+                <div class="flag">🇨🇳</div>
+                <div class="flag">🇯🇵</div>
+                <div class="flag">🇧🇷</div>
+            </div>
+        </div>
+        <h1>LinguaLearn</h1>
+        <p>Master any language, one lesson at a time</p>
+        <button class="btn-primary" onclick="showLanguageSelection()">Get Started</button>
+    </div>
+
+    <!-- Language Selection Screen -->
+    <div class="screen language-selection" id="languageSelection">
+        <div class="container">
+            <div class="header-section">
+                <h2>Choose Your Language Journey 🌏</h2>
+                <p>Select the language you want to master. We'll create a personalized learning path for you!</p>
+            </div>
+            
+            <div class="languages-grid">
+                <div class="language-card" onclick="selectLanguage('Spanish', '🇪🇸', this)">
+                    <div class="flag-icon">🇪🇸</div>
+                    <h3>Spanish</h3>
+                    <p>500M+ speakers worldwide</p>
+                    <p>Difficulty: Easy</p>
+                </div>
+                
+                <div class="language-card" onclick="selectLanguage('French', '🇫🇷', this)">
+                    <div class="flag-icon">🇫🇷</div>
+                    <h3>French</h3>
+                    <p>280M+ speakers worldwide</p>
+                    <p>Difficulty: Medium</p>
+                </div>
+                
+                <div class="language-card" onclick="selectLanguage('German', '🇩🇪', this)">
+                    <div class="flag-icon">🇩🇪</div>
+                    <h3>German</h3>
+                    <p>135M+ speakers worldwide</p>
+                    <p>Difficulty: Hard</p>
+                </div>
+                
+                <div class="language-card" onclick="selectLanguage('Italian', '🇮🇹', this)">
+                    <div class="flag-icon">🇮🇹</div>
+                    <h3>Italian</h3>
+                    <p>85M+ speakers worldwide</p>
+                    <p>Difficulty: Easy</p>
+                </div>
+                
+                <div class="language-card" onclick="selectLanguage('Japanese', '🇯🇵', this)">
+                    <div class="flag-icon">🇯🇵</div>
+                    <h3>Japanese</h3>
+                    <p>125M+ speakers worldwide</p>
+                    <p>Difficulty: Very Hard</p>
+                </div>
+                
+                <div class="language-card" onclick="selectLanguage('Chinese', '🇨🇳', this)">
+                    <div class="flag-icon">🇨🇳</div>
+                    <h3>Chinese</h3>
+                    <p>1.3B+ speakers worldwide</p>
+                    <p>Difficulty: Very Hard</p>
+                </div>
+                
+                <div class="language-card" onclick="selectLanguage('Portuguese', '🇧🇷', this)">
+                    <div class="flag-icon">🇧🇷</div>
+                    <h3>Portuguese</h3>
+                    <p>260M+ speakers worldwide</p>
+                    <p>Difficulty: Medium</p>
+                </div>
+                
+                <div class="language-card" onclick="selectLanguage('Hindi', '🇮🇳', this)">
+                    <div class="flag-icon">🇮🇳</div>
+                    <h3>Hindi</h3>
+                    <p>600M+ speakers worldwide</p>
+                    <p>Difficulty: Hard</p>
+                </div>
+            </div>
+            
+            <button class="btn-primary" onclick="startLearning()" id="startBtn" style="display: none; width: 100%;">Start Learning</button>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div class="screen dashboard" id="dashboardScreen">
+        <div class="navbar">
+            <div class="logo">🌐 LinguaLearn</div>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div>
+                    <div style="font-weight: 600;" id="userName">Welcome!</div>
+                    <div style="font-size: 0.85em; color: #666;" id="userLanguage">Learning...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="progress-section">
+                <div class="progress-header">
+                    <div>
+                        <h2>Your Progress</h2>
+                        <p style="color: #666; margin-top: 5px;">Keep up the great work!</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 2em; font-weight: 700; color: #667eea;" id="overallProgress">0%</div>
+                        <p style="color: #666;">Complete</p>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBarFill" style="width: 0%"></div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4 id="lessonsCompleted">0</h4>
+                        <p>Lessons Completed</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 id="currentStreak">0</h4>
+                        <p>Day Streak 🔥</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 id="totalXP">0</h4>
+                        <p>Total XP</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 20px; color: #333;">Course Modules</h2>
+            <div class="modules-grid" id="modulesContainer"></div>
+        </div>
+    </div>
+
+    <!-- Lesson Screen -->
+    <div class="screen lesson-screen" id="lessonScreen">
+        <div class="lesson-container">
+            <button class="btn-back" onclick="backToDashboard()">← Back to Dashboard</button>
+            
+            <div class="lesson-header">
+                <h2 id="lessonTitle">Lesson 1</h2>
+                <div class="lesson-progress">
+                    <div class="lesson-progress-fill" id="lessonProgressFill" style="width: 0%"></div>
+                </div>
+                <p style="text-align: center; color: #666;" id="questionNumber">Question 1 of 5</p>
+            </div>
+
+            <div class="exercise-card" id="exerciseContent">
+                <!-- Exercise content will be loaded here -->
+            </div>
+
+            <div id="feedbackBox"></div>
+            <button class="btn-next" id="nextBtn" style="display: none;">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedLanguage = null;
+        let selectedFlag = null;
+        let currentModule = 0;
+        let currentLesson = 0;
+        let currentQuestion = 0;
+        let lessonScore = 0;
+        let userData = {
+            lessonsCompleted: 0,
+            currentStreak: 1,
+            totalXP: 0,
+            progress: 0
+        };
+
+        // Course structure
+        const courseModules = [
+            {
+                name: "Basics 1",
+                icon: "📚",
+                status: "in-progress",
+                lessons: [
+                    {
+                        name: "Greetings",
+                        completed: false,
+                        exercises: [
+                            { question: "How do you say 'Hello' in {lang}?", options: ["Hola", "Adiós", "Gracias", "Por favor"], correct: 0 },
+                            { question: "What does 'Gracias' mean?", options: ["Hello", "Goodbye", "Thank you", "Please"], correct: 2 },
+                            { question: "Choose the correct greeting:", options: ["Buenos días", "Buenas noches", "Buenas tardes", "All are greetings"], correct: 3 },
+                            { question: "'¿Cómo estás?' means:", options: ["How are you?", "What's your name?", "Where are you?", "How old are you?"], correct: 0 },
+                            { question: "The word for 'Goodbye' is:", options: ["Hola", "Adiós", "Sí", "No"], correct: 1 }
+                        ]
+                    },
+                    {
+                        name: "Basic Phrases",
+                        completed: false,
+                        exercises: [
+                            { question: "'Por favor' means:", options: ["Thank you", "Please", "Sorry", "Welcome"], correct: 1 },
+                            { question: "How do you say 'Yes'?", options: ["No", "Sí", "Tal vez", "Nunca"], correct: 1 },
+                            { question: "'Lo siento' means:", options: ["I'm sorry", "I love you", "I don't know", "I understand"], correct: 0 },
+                            { question: "'De nada' is the response to:", options: ["Hello", "Thank you", "Goodbye", "How are you?"], correct: 1 },
+                            { question: "What does '¿Hablas inglés?' mean?", options: ["Do you speak English?", "I speak English", "I don't understand", "Where are you from?"], correct: 0 }
+                        ]
+                    },
+                    {
+                        name: "Numbers 1-10",
+                        completed: false,
+                        exercises: [
+                            { question: "The number 'cinco' is:", options: ["3", "5", "7", "9"], correct: 1 },
+                            { question: "'Diez' means:", options: ["8", "9", "10", "11"], correct: 2 },
+                            { question: "How do you say '1'?", options: ["Uno", "Dos", "Tres", "Cuatro"], correct: 0 },
+                            { question: "'Ocho' is the number:", options: ["6", "7", "8", "9"], correct: 2 },
+                            { question: "What comes after 'seis'?", options: ["Cinco", "Siete", "Ocho", "Nueve"], correct: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Basics 2",
+                icon: "📖",
+                status: "locked",
+                lessons: [
+                    {
+                        name: "Colors",
+                        completed: false,
+                        exercises: [
+                            { question: "'Rojo' means:", options: ["Blue", "Red", "Green", "Yellow"], correct: 1 },
+                            { question: "The color 'azul' is:", options: ["Blue", "Black", "White", "Brown"], correct: 0 },
+                            { question: "'Verde' means:", options: ["Red", "Yellow", "Green", "Purple"], correct: 2 },
+                            { question: "What is 'amarillo'?", options: ["Orange", "Yellow", "Pink", "Gray"], correct: 1 },
+                            { question: "'Blanco' is:", options: ["Black", "White", "Brown", "Gray"], correct: 1 }
+                        ]
+                    },
+                    {
+                        name: "Family",
+                        completed: false,
+                        exercises: [
+                            { question: "'Madre' means:", options: ["Father", "Mother", "Sister", "Brother"], correct: 1 },
+                            { question: "How do you say 'father'?", options: ["Hijo", "Hermano", "Padre", "Abuelo"], correct: 2 },
+                            { question: "'Hermana' is:", options: ["Sister", "Brother", "Cousin", "Aunt"], correct: 0 },
+                            { question: "'Abuelo' means:", options: ["Uncle", "Grandfather", "Father", "Brother"], correct: 1 },
+                            { question: "The word for 'son' is:", options: ["Hijo", "Hija", "Niño", "Padre"], correct: 0 }
+                        ]
+                    },
+                    {
+                        name: "Food Basics",
+                        completed: false,
+                        exercises: [
+                            { question: "'Agua' means:", options: ["Food", "Water", "Bread", "Milk"], correct: 1 },
+                            { question: "How do you say 'bread'?", options: ["Pan", "Leche", "Carne", "Pescado"], correct: 0 },
+                            { question: "'Manzana' is:", options: ["Orange", "Banana", "Apple", "Grape"], correct: 2 },
+                            { question: "'Pollo' means:", options: ["Fish", "Beef", "Chicken", "Pork"], correct: 2 },
+                            { question: "The word for 'milk' is:", options: ["Agua", "Leche", "Jugo", "Café"], correct: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Common Phrases",
+                icon: "💬",
+                status: "locked",
+                lessons: [
+                    {
+                        name: "Introductions",
+                        completed: false,
+                        exercises: [
+                            { question: "'Me llamo...' means:", options: ["I am from...", "My name is...", "I like...", "I want..."], correct: 1 },
+                            { question: "How do you ask someone's name?", options: ["¿Cómo estás?", "¿Cuántos años tienes?", "¿Cómo te llamas?", "¿De dónde eres?"], correct: 2 },
+                            { question: "'Mucho gusto' means:", options: ["Good morning", "Nice to meet you", "See you later", "Excuse me"], correct: 1 },
+                            { question: "'Soy de...' means:", options: ["I want...", "I am from...", "I have...", "I like..."], correct: 1 },
+                            { question: "How do you say 'What's your name?'", options: ["¿Cómo estás?", "¿Cómo te llamas?", "¿Qué tal?", "¿Cuántos años tienes?"], correct: 1 }
+                        ]
+                    },
+                    {
+                        name: "Daily Conversation",
+                        completed: false,
+                        exercises: [
+                            { question: "'¿Qué hora es?' means:", options: ["What time is it?", "What day is it?", "How are you?", "Where are you?"], correct: 0 },
+                            { question: "'Tengo hambre' means:", options: ["I'm thirsty", "I'm hungry", "I'm tired", "I'm cold"], correct: 1 },
+                            { question: "How do you say 'I don't understand'?", options: ["No sé", "No entiendo", "No quiero", "No puedo"], correct: 1 },
+                            { question: "'¿Dónde está...?' means:", options: ["What is...?", "Who is...?", "Where is...?", "When is...?"], correct: 2 },
+                            { question: "'Necesito ayuda' means:", options: ["I need help", "I want water", "I'm leaving", "I'm sorry"], correct: 0 }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        function showLanguageSelection() {
+            document.getElementById('splashScreen').classList.remove('active');
+            document.getElementById('languageSelection').classList.add('active');
+        }
+
+        function selectLanguage(lang, flag, element) {
+            selectedLanguage = lang;
+            selectedFlag = flag;
+            
+            document.querySelectorAll('.language-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            document.getElementById('startBtn').style.display = 'block';
+        }
+
+        function startLearning() {
+            if (!selectedLanguage) {
+                alert('Please select a language first!');
+                return;
+            }
+            
+            document.getElementById('languageSelection').classList.remove('active');
+            document.getElementById('dashboardScreen').classList.add('active');
+            
+            document.getElementById('userName').textContent = 'Language Learner';
+            document.getElementById('userLanguage').textContent = `Learning ${selectedLanguage}`;
+            document.getElementById('userAvatar').textContent = selectedFlag;
+            
+            loadModules();
+            updateStats();
+        }
+
+        function loadModules() {
+            const container = document.getElementById('modulesContainer');
+            container.innerHTML = '';
+            
+            courseModules.forEach((module, moduleIndex) => {
+                const moduleCard = document.createElement('div');
+                moduleCard.className = 'module-card';
+                
+                let statusClass = module.status;
+                let statusText = module.status === 'locked' ? '🔒 Locked' : 
+                                module.status === 'in-progress' ? '📝 In Progress' : 
+                                '✅ Completed';
+                
+                moduleCard.innerHTML = `
+                    <div class="module-header">
+                        <div>
+                            <span class="module-icon">${module.icon}</span>
+                            <strong style="font-size: 1.3em; margin-left: 10px;">${module.name}</strong>
+                        </div>
+                        <span class="module-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="lessons-list" id="lessons-${moduleIndex}"></div>
+                `;
+                
+                container.appendChild(moduleCard);
+                
+                const lessonsList = document.getElementById(`lessons-${moduleIndex}`);
+                module.lessons.forEach((lesson, lessonIndex) => {
+                    const lessonItem = document.createElement('div');
+                    const isLocked = module.status === 'locked';
+                    const isCompleted = lesson.completed;
+                    
+                    lessonItem.className = `lesson-item ${isLocked ? 'locked' : ''} ${isCompleted ? 'completed' : ''}`;
+                    lessonItem.innerHTML = `
+                        <div class="lesson-info">
+                            <div class="lesson-number">${isCompleted ? '✓' : lessonIndex + 1}</div>
+                            <div>
+                                <strong>${lesson.name}</strong>
+                                <div style="font-size: 0.85em; color: #666;">
+                                    ${isCompleted ? 'Completed' : isLocked ? 'Complete previous modules' : 'Ready to start'}
+                                </div>
+                            </div>
+                        </div>
+                        <div>${isCompleted ? '100%' : '0%'}</div>
+                    `;
+                    
+                    if (!isLocked) {
+                        lessonItem.style.cursor = 'pointer';
+                        lessonItem.onclick = () => startLesson(moduleIndex, lessonIndex);
+                    }
+                    
+                    lessonsList.appendChild(lessonItem);
+                });
+            });
+        }
+
+        function startLesson(moduleIndex, lessonIndex) {
+            currentModule = moduleIndex;
+            currentLesson = lessonIndex;
+            currentQuestion = 0;
+            lessonScore = 0;
+            
+            document.getElementById('dashboardScreen').classList.remove('active');
+            document.getElementById('lessonScreen').classList.add('active');
+            
+            const lesson = courseModules[moduleIndex].lessons[lessonIndex];
+            document.getElementById('lessonTitle').textContent = lesson.name;
+            
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const lesson = courseModules[currentModule].lessons[currentLesson];
+            const exercise = lesson.exercises[currentQuestion];
+            
+            const progress = ((currentQuestion + 1) / lesson.exercises.length) * 100;
+            document.getElementById('lessonProgressFill').style.width = progress + '%';
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of ${lesson.exercises.length}`;
+            
+            const exerciseContent = document.getElementById('exerciseContent');
+            exerciseContent.innerHTML = `
+                <h3>${exercise.question.replace('{lang}', selectedLanguage)}</h3>
+                <div class="options-grid">
+                    ${exercise.options.map((option, index) => 
+                        `<button class="option-btn" onclick="checkAnswer(${index})">${option}</button>`
+                    ).join('')}
+                </div>
+            `;
+            
+            document.getElementById('feedbackBox').innerHTML = '';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function checkAnswer(selectedIndex) {
+            const lesson = courseModules[currentModule].lessons[currentLesson];
+            const exercise = lesson.exercises[currentQuestion];
+            const isCorrect = selectedIndex === exercise.correct;
+            
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach((btn, index) => {
+                btn.classList.add('disabled');
+                if (index === exercise.correct) {
+                    btn.classList.add('correct');
+                } else if (index === selectedIndex && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+            });
+            
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = `feedback-box ${isCorrect ? 'correct' : 'wrong'}`;
+            feedbackBox.innerHTML = isCorrect ? 
+                '🎉 Excellent! That\'s correct!' : 
+                '❌ Not quite right. The correct answer is highlighted.';
+            
+            if (isCorrect) {
+                lessonScore++;
+                userData.totalXP += 10;
+            }
+            
+            document.getElementById('nextBtn').style.display = 'block';
+            document.getElementById('nextBtn').onclick = nextQuestion;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            const lesson = courseModules[currentModule].lessons[currentLesson];
+            
+            if (currentQuestion < lesson.exercises.length) {
+                loadQuestion();
+            } else {
+                completeLesson();
+            }
+        }
+
+        function completeLesson() {
+            const lesson = courseModules[currentModule].lessons[currentLesson];
+            lesson.completed = true;
+            
+            userData.lessonsCompleted++;
+            userData.totalXP += 50;
+            
+            // Check if module is completed
+            const moduleCompleted = courseModules[currentModule].lessons.every(l => l.completed);
+            if (moduleCompleted) {
+                courseModules[currentModule].status = 'completed';
+                if (currentModule + 1 < courseModules.length) {
+                    courseModules[currentModule + 1].status = 'in-progress';
+                }
+            }
+            
+            const percentage = Math.round((lessonScore / lesson.exercises.length) * 100);
+            
+            const exerciseContent = document.getElementById('exerciseContent');
+            exerciseContent.innerHTML = `
+                <div style="text-align: center;">
+                    <h2 style="font-size: 3em; margin-bottom: 20px;">🎉</h2>
+                    <h2 style="margin-bottom: 20px;">Lesson Complete!</h2>
+                    <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">
+                        You got ${lessonScore} out of ${lesson.exercises.length} correct (${percentage}%)
+                    </p>
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 10px;">+${userData.totalXP} XP</h3>
+                        <p>Keep up the great work!</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('feedbackBox').innerHTML = '';
+            document.getElementById('nextBtn').textContent = 'Continue to Dashboard';
+            document.getElementById('nextBtn').onclick = backToDashboard;
+        }
+
+        function backToDashboard() {
+            document.getElementById('lessonScreen').classList.remove('active');
+            document.getElementById('dashboardScreen').classList.add('active');
+            loadModules();
+            updateStats();
+        }
+
+        function updateStats() {
+            const totalLessons = courseModules.reduce((sum, module) => sum + module.lessons.length, 0);
+            const progress = Math.round((userData.lessonsCompleted / totalLessons) * 100);
+            
+            document.getElementById('lessonsCompleted').textContent = userData.lessonsCompleted;
+            document.getElementById('currentStreak').textContent = userData.currentStreak;
+            document.getElementById('totalXP').textContent = userData.totalXP;
+            document.getElementById('overallProgress').textContent = progress + '%';
+            document.getElementById('progressBarFill').style.width = progress + '%';
+        }
+    </script>
+</body>
+</html>
